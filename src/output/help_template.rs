@@ -689,9 +689,7 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
                 self.term_w,
                 arg.get_id()
             );
-            self.term_w >= taken
-                && (taken as f32 / self.term_w as f32) > 0.40
-                && h_w > (self.term_w - taken)
+            taken + h_w > self.term_w && (taken as f32 / self.term_w as f32) > 0.40
         }
     }
 
@@ -939,9 +937,7 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
             let h = cmd.get_about().unwrap_or_default();
             let h_w = h.display_width() + display_width(spec_vals);
             let taken = longest + TAB_WIDTH * 2;
-            self.term_w >= taken
-                && (taken as f32 / self.term_w as f32) > 0.40
-                && h_w > (self.term_w - taken)
+            taken + h_w > self.term_w && (taken as f32 / self.term_w as f32) > 0.40
         }
     }
 
