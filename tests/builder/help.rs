@@ -278,11 +278,8 @@ tests clap library
 Usage: clap-test
 
 Options:
-  -h, --help
-          Print help information (use `-h` for a summary)
-
-  -V, --version
-          Print version information
+  -h, --help     Print help information (use `-h` for a summary)
+  -V, --version  Print version information
 
 some longer text that comes after the help
 ";
@@ -634,21 +631,14 @@ fn possible_vals_with_help() {
 Usage: ctest [OPTIONS]
 
 Options:
-  -p, --pos <VAL>
-          Some vals
+  -p, --pos <VAL>    Some vals
 
-          Possible values:
-          - fast
-          - slow: not as fast
-
-  -c, --cafe <FILE>
-          A coffeehouse, coffee shop, or café.
-
-  -h, --help
-          Print help information (use `-h` for a summary)
-
-  -V, --version
-          Print version information
+                     Possible values:
+                     - fast
+                     - slow: not as fast
+  -c, --cafe <FILE>  A coffeehouse, coffee shop, or café.
+  -h, --help         Print help information (use `-h` for a summary)
+  -V, --version      Print version information
 ";
     let app = Command::new("ctest")
         .version("0.1")
@@ -982,15 +972,11 @@ that should be displayed
 Usage: myapp [arg1]
 
 Arguments:
-  [arg1]
-          some option
+  [arg1]  some option
 
 Options:
-  -h, --help
-          Print help information (use `-h` for a summary)
-
-  -V, --version
-          Print version information
+  -h, --help     Print help information (use `-h` for a summary)
+  -V, --version  Print version information
 ";
 
     let cmd = Command::new("myapp")
@@ -1741,11 +1727,8 @@ Long about foo
 Usage: ctest foo
 
 Options:
-  -h, --help
-          Print help information (use `-h` for a summary)
-
-  -V, --version
-          Print version information
+  -h, --help     Print help information (use `-h` for a summary)
+  -V, --version  Print version information
 ";
 
 #[test]
@@ -1938,14 +1921,11 @@ fn issue_1642_long_help_spacing() {
 Usage: prog [OPTIONS]
 
 Options:
-      --config
-          The config file used by the myprog must be in JSON format
-          with only valid keys and may not contain other nonsense
-          that cannot be read by this program. Obviously I'm going on
-          and on, so I'll stop now.
-
-  -h, --help
-          Print help information (use `-h` for a summary)
+      --config  The config file used by the myprog must be in JSON format
+                with only valid keys and may not contain other nonsense
+                that cannot be read by this program. Obviously I'm going on
+                and on, so I'll stop now.
+  -h, --help    Print help information (use `-h` for a summary)
 ";
 
     let cmd = Command::new("prog").arg(

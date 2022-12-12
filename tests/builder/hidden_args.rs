@@ -73,17 +73,10 @@ hides short args
 Usage: test [OPTIONS]
 
 Options:
-  -c, --config
-          Some help text describing the --config arg
-
-  -v, --visible
-          This text should be visible
-
-  -h, --help
-          Print help information (use `-h` for a summary)
-
-  -V, --version
-          Print version information
+  -c, --config   Some help text describing the --config arg
+  -v, --visible  This text should be visible
+  -h, --help     Print help information (use `-h` for a summary)
+  -V, --version  Print version information
 ";
 
     let cmd = Command::new("test")
@@ -113,14 +106,9 @@ hides long args
 Usage: test [OPTIONS]
 
 Options:
-  -v, --visible
-          This text should be visible
-
-  -h, --help
-          Print help information (use `-h` for a summary)
-
-  -V, --version
-          Print version information
+  -v, --visible  This text should be visible
+  -h, --help     Print help information (use `-h` for a summary)
+  -V, --version  Print version information
 ";
 
 #[test]

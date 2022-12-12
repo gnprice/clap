@@ -670,7 +670,7 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
     }
 
     fn arg_next_line_help(&self, arg: &Arg, longest: usize) -> bool {
-        if self.next_line_help || arg.is_next_line_help_set() || self.use_long {
+        if self.next_line_help || arg.is_next_line_help_set() {
             // setting_next_line
             true
         } else {
