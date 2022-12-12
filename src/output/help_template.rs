@@ -682,6 +682,13 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
             } else {
                 longest + TAB_WIDTH * 2 + 4 // See `fn short` for the 4
             };
+            debug!(
+                "HelpTemplate::arg_next_line_help: taken={}, h_w={}, term_w={}, arg={}",
+                taken,
+                h_w,
+                self.term_w,
+                arg.get_id()
+            );
             self.term_w >= taken
                 && (taken as f32 / self.term_w as f32) > 0.40
                 && h_w > (self.term_w - taken)
