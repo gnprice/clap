@@ -32,5 +32,5 @@ fn ui_tests() {
     ]
     .join(" ");
     t.register_bins(trycmd::cargo::compile_examples(["--features", &features]).unwrap());
-    t.case("tests/ui/*.toml");
+    t.case("tests/ui/subcommand_help.toml");
 }
