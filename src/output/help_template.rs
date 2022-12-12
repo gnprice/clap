@@ -929,7 +929,7 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
     }
 
     fn subcommand_next_line_help(&self, cmd: &Command, spec_vals: &str, longest: usize) -> bool {
-        if self.next_line_help | self.use_long {
+        if self.next_line_help {
             // setting_next_line
             true
         } else {
