@@ -3,7 +3,12 @@ fn main() {
         .version("1.0")
         .long_version("1.0 - a2132c")
         .arg_required_else_help(true)
-        .subcommand(clap::Command::new("more"))
+        .subcommand(
+            clap::Command::new("more")
+                .about("Do more")
+                .long_about("Do more, in more detail")
+                .arg(clap::Arg::new("force").long("force").help("Do for real")),
+        )
         .arg(
             clap::Arg::new("verbose")
                 .long("verbose")
