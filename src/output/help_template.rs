@@ -179,14 +179,22 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
                         // Include even those with a heading as we don't have a good way of
                         // handling help_heading in the template.
                         self.write_args(
-                            &self.cmd.get_non_positionals().collect::<Vec<_>>(),
+                            &self
+                                .cmd
+                                .get_non_positionals()
+                                .filter(|arg| self.should_show_arg(arg))
+                                .collect::<Vec<_>>(),
                             "options",
                             option_sort_key,
                         );
                     }
                     "positionals" => {
                         self.write_args(
-                            &self.cmd.get_positionals().collect::<Vec<_>>(),
+                            &self
+                                .cmd
+                                .get_positionals()
+                                .filter(|arg| self.should_show_arg(arg))
+                                .collect::<Vec<_>>(),
                             "positionals",
                             positional_sort_key,
                         );
@@ -415,7 +423,10 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
             }
         }
     }
+
     /// Sorts arguments by length and display order and write their help to the wrapped stream.
+    ///
+    /// Caller must ensure `args` is properly filtered by `self.should_show_arg`.
     fn write_args(&mut self, args: &[&Arg], _category: &str, sort_key: ArgSortKey) {
         debug!("HelpTemplate::write_args {}", _category);
         // The shortest an arg can legally be is 2 (i.e. '-x')
@@ -423,12 +434,7 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
         let mut ord_v = Vec::new();
 
         // Determine the longest
-        for &arg in args.iter().filter(|arg| {
-            // If it's NextLineHelp we don't care to compute how long it is because it may be
-            // NextLineHelp on purpose simply *because* it's so long and would throw off all other
-            // args alignment
-            self.should_show_arg(arg)
-        }) {
+        for &arg in args.iter() {
             if longest_filter(arg) {
                 longest = longest.max(display_width(&arg.to_string()));
                 debug!(
@@ -673,12 +679,10 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
 
     /// Will use next line help on writing args.
     fn will_args_wrap(&self, args: &[&Arg], longest: usize) -> bool {
-        args.iter()
-            .filter(|arg| self.should_show_arg(arg))
-            .any(|arg| {
-                let spec_vals = &self.spec_vals(arg);
-                self.arg_next_line_help(arg, spec_vals, longest)
-            })
+        args.iter().any(|arg| {
+            let spec_vals = &self.spec_vals(arg);
+            self.arg_next_line_help(arg, spec_vals, longest)
+        })
     }
 
     fn arg_next_line_help(&self, arg: &Arg, spec_vals: &str, longest: usize) -> bool {
