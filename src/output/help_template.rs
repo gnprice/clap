@@ -35,11 +35,8 @@ impl<'cmd, 'writer> AutoHelp<'cmd, 'writer> {
     }
 
     pub(crate) fn write_help(&mut self) {
-        let pos = self
-            .template
-            .cmd
-            .get_positionals()
-            .any(|arg| self.template.should_show_arg(arg));
+        // TODO simplify any-true
+        let pos = self.template.get_positionals().any(|_| true);
         let non_pos = self
             .template
             .cmd
@@ -213,6 +210,23 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
             }
         }
     }
+}
+
+/// View-model methods
+impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
+    /// Positional arguments we intend to show in the help.
+    fn get_positionals(&self) -> impl Iterator<Item = &Arg> {
+        self.cmd
+            .get_positionals()
+            .filter(|arg| self.should_show_arg(arg))
+    }
+
+    // /// Non-positional arguments we intend to show in the help.
+    // fn get_non_positionals(&self) -> impl Iterator<Item = &Arg> {
+    //     self.cmd
+    //         .get_non_positionals()
+    //         .filter(|arg| self.should_show_arg(arg))
+    // }
 }
 
 /// Basic template methods
