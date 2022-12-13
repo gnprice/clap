@@ -182,11 +182,8 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
                         );
                     }
                     "positionals" => {
-                        self.write_args(
-                            &self.cmd.get_positionals().collect::<Vec<_>>(),
-                            "positionals",
-                            positional_sort_key,
-                        );
+                        let args = (&self).get_positionals().collect::<Vec<_>>();
+                        self.write_args(&args, "positionals", positional_sort_key);
                     }
                     "subcommands" => {
                         self.write_subcommands(self.cmd);
@@ -349,10 +346,8 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
     pub(crate) fn write_all_args(&mut self) {
         debug!("HelpTemplate::write_all_args");
         let pos = self
-            .cmd
             .get_positionals()
             .filter(|a| a.get_help_heading().is_none())
-            .filter(|arg| self.should_show_arg(arg))
             .collect::<Vec<_>>();
         let non_pos = self
             .cmd
