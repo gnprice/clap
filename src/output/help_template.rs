@@ -832,24 +832,14 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
     /// Writes help for subcommands of a Parser Object to the wrapped stream.
     fn write_subcommands(&mut self, cmd: &Command) {
         debug!("HelpTemplate::write_subcommands");
-
-        let mut subcmds = Vec::new();
-        for subcommand in cmd
-            .get_subcommands()
-            .filter(|subcommand| should_show_subcommand(subcommand))
-        {
-            let mut styled = StyledStr::new();
-            styled.literal(subcommand.get_name());
-            if let Some(short) = subcommand.get_short_flag() {
-                styled.none(", ");
-                styled.literal(format!("-{}", short));
-            }
-            if let Some(long) = subcommand.get_long_flag() {
-                styled.none(", ");
-                styled.literal(format!("--{}", long));
-            }
-            subcmds.push((subcommand.get_display_order(), styled, subcommand));
-        }
+        let mut subcmds = Vec::from_iter(
+            cmd.get_subcommands()
+                .filter(|subcommand| should_show_subcommand(subcommand))
+                .map(|subcommand| {
+                    let styled = self.subcommand_synopsis(subcommand);
+                    (subcommand.get_display_order(), styled, subcommand)
+                }),
+        );
         subcmds.sort_by(|a, b| (a.0, &a.1).cmp(&(b.0, &b.1)));
 
         // Determine the longest.
@@ -872,6 +862,20 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
             }
             self.write_subcommand(sc_str, sc, next_line_help, longest);
         }
+    }
+
+    fn subcommand_synopsis(&self, subcommand: &Command) -> StyledStr {
+        let mut styled = StyledStr::new();
+        styled.literal(subcommand.get_name());
+        if let Some(short) = subcommand.get_short_flag() {
+            styled.none(", ");
+            styled.literal(format!("-{}", short));
+        }
+        if let Some(long) = subcommand.get_long_flag() {
+            styled.none(", ");
+            styled.literal(format!("--{}", long));
+        }
+        styled
     }
 
     fn write_subcommand(
