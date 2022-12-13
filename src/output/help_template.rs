@@ -856,7 +856,11 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
 
         debug!("HelpTemplate::write_subcommands longest = {}", longest);
 
-        let next_line_help = self.will_subcommands_wrap(cmd.get_subcommands(), longest);
+        let next_line_help = cmd
+            .get_subcommands()
+            .into_iter()
+            .filter(|&subcommand| should_show_subcommand(subcommand))
+            .any(|subcommand| self.subcommand_next_line_help(subcommand, longest));
 
         let mut first = true;
         for (_, sc_str, sc) in ord_v {
@@ -867,18 +871,6 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
             }
             self.write_subcommand(sc_str, sc, next_line_help, longest);
         }
-    }
-
-    /// Will use next line help on writing subcommands.
-    fn will_subcommands_wrap<'a>(
-        &self,
-        subcommands: impl IntoIterator<Item = &'a Command>,
-        longest: usize,
-    ) -> bool {
-        subcommands
-            .into_iter()
-            .filter(|&subcommand| should_show_subcommand(subcommand))
-            .any(|subcommand| self.subcommand_next_line_help(subcommand, longest))
     }
 
     fn write_subcommand(
