@@ -878,10 +878,7 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
         subcommands
             .into_iter()
             .filter(|&subcommand| should_show_subcommand(subcommand))
-            .any(|subcommand| {
-                let spec_vals = &self.sc_spec_vals(subcommand);
-                self.subcommand_next_line_help(subcommand, spec_vals, longest)
-            })
+            .any(|subcommand| self.subcommand_next_line_help(subcommand, longest))
     }
 
     fn write_subcommand(
@@ -930,14 +927,14 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
         spec_vals.join(" ")
     }
 
-    fn subcommand_next_line_help(&self, cmd: &Command, spec_vals: &str, longest: usize) -> bool {
+    fn subcommand_next_line_help(&self, cmd: &Command, longest: usize) -> bool {
         if self.next_line_help | self.use_long {
             // setting_next_line
             true
         } else {
             // force_next_line
             let h = cmd.get_about().unwrap_or_default();
-            let h_w = h.display_width() + display_width(spec_vals);
+            let h_w = h.display_width() + display_width(&self.sc_spec_vals(cmd));
             let taken = longest + TAB_WIDTH * 2;
             self.term_w >= taken
                 && (taken as f32 / self.term_w as f32) > 0.40
