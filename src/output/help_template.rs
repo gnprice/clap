@@ -832,9 +832,8 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
     /// Writes help for subcommands of a Parser Object to the wrapped stream.
     fn write_subcommands(&mut self, cmd: &Command) {
         debug!("HelpTemplate::write_subcommands");
-        // The shortest an arg can legally be is 2 (i.e. '-x')
-        let mut longest = 2;
-        let mut ord_v = Vec::new();
+
+        let mut subcmds = Vec::new();
         for subcommand in cmd
             .get_subcommands()
             .filter(|subcommand| should_show_subcommand(subcommand))
@@ -849,21 +848,23 @@ impl<'cmd, 'writer> HelpTemplate<'cmd, 'writer> {
                 styled.none(", ");
                 styled.literal(format!("--{}", long));
             }
-            longest = longest.max(styled.display_width());
-            ord_v.push((subcommand.get_display_order(), styled, subcommand));
+            subcmds.push((subcommand.get_display_order(), styled, subcommand));
         }
-        ord_v.sort_by(|a, b| (a.0, &a.1).cmp(&(b.0, &b.1)));
+        subcmds.sort_by(|a, b| (a.0, &a.1).cmp(&(b.0, &b.1)));
 
+        // Determine the longest.
+        let mut longest = 2; // The shortest an arg can legally be is 2 (like '-x')
+        for (_, styled, _) in subcmds.iter() {
+            longest = longest.max(styled.display_width());
+        }
         debug!("HelpTemplate::write_subcommands longest = {}", longest);
 
-        let next_line_help = cmd
-            .get_subcommands()
-            .into_iter()
-            .filter(|&subcommand| should_show_subcommand(subcommand))
-            .any(|subcommand| self.subcommand_next_line_help(subcommand, longest));
+        let next_line_help = subcmds
+            .iter()
+            .any(|(_, _, subcommand)| self.subcommand_next_line_help(subcommand, longest));
 
         let mut first = true;
-        for (_, sc_str, sc) in ord_v {
+        for (_, sc_str, sc) in subcmds {
             if first {
                 first = false;
             } else {
